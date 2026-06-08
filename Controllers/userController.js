@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const { Resend } = require("resend");
 const User = require("../Models/User");
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => new Resend(process.env.RESEND_API_KEY || "placeholder");
 
 const signup = async (req, res) => {
   try {
@@ -41,7 +41,7 @@ const sendOtp = async (req, res) => {
     user.otp = otp;
     user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
     await user.save();
-    await resend.emails.send({
+    await getResend().emails.send({
       from: "Trendify <noreply@trendify.com>",
       to: email,
       subject: "Your OTP Code",
