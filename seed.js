@@ -247,11 +247,51 @@ mongoose.connect(process.env.MONGO_URL).then(async () => {
     await Coupon.findOneAndUpdate({ code: c.code }, c, { upsert: true });
   }
 
+  // Extra products
+  const extraProducts = [
+    // MEN
+    { name: "Men's Polo T-Shirt", description: "Classic polo in premium pique cotton. Smart enough for work, comfortable enough for weekends.", price: 899, category: "men", images: ["https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=500"], colors: ["White", "Navy", "Black", "Red"], sizes: ["S", "M", "L", "XL", "XXL"], stock: 60 },
+    { name: "Men's Linen Summer Shirt", description: "Breathable linen shirt perfect for hot summer days. Lightweight and wrinkle-resistant.", price: 1499, category: "men", images: ["https://images.unsplash.com/photo-1603252109303-2751441dd157?w=500"], colors: ["White", "Sky Blue", "Beige", "Mint"], sizes: ["S", "M", "L", "XL"], stock: 45 },
+    { name: "Men's Slim Fit Suit", description: "Two-piece slim fit suit in premium fabric. Perfect for weddings, interviews, and formal events.", price: 6999, category: "men", images: ["https://images.unsplash.com/photo-1594938298603-c8148c4b4237?w=500"], colors: ["Charcoal", "Navy", "Black"], sizes: ["S", "M", "L", "XL", "XXL"], stock: 20 },
+    { name: "Men's Hooded Windbreaker", description: "Lightweight windbreaker jacket with hood and zip pockets. Perfect for outdoor activities.", price: 2199, category: "men", images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500"], colors: ["Black", "Navy", "Olive", "Red"], sizes: ["S", "M", "L", "XL"], stock: 35 },
+    { name: "Men's Cargo Pants", description: "Tactical cargo pants with multiple pockets. Durable and stylish for outdoor adventures.", price: 1599, category: "men", images: ["https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=500"], colors: ["Khaki", "Olive", "Black", "Grey"], sizes: ["28", "30", "32", "34", "36"], stock: 40 },
+    { name: "Men's Striped Crew Neck Tee", description: "Classic striped tee in soft 100% cotton. A wardrobe essential for casual everyday wear.", price: 599, category: "men", images: ["https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=500"], colors: ["Navy/White", "Black/White", "Red/White"], sizes: ["S", "M", "L", "XL"], stock: 75 },
+    { name: "Men's Leather Belt", description: "Genuine leather belt with brushed metal buckle. A versatile accessory for any outfit.", price: 699, category: "men", images: ["https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500"], colors: ["Black", "Brown", "Tan"], sizes: ["S", "M", "L", "XL"], stock: 80 },
+    { name: "Men's Bomber Jacket", description: "Classic bomber jacket with ribbed cuffs and hem. Timeless style with a modern fit.", price: 2999, category: "men", images: ["https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=500"], colors: ["Olive", "Black", "Navy"], sizes: ["S", "M", "L", "XL"], stock: 28 },
+
+    // WOMEN
+    { name: "Women's Bodycon Mini Dress", description: "Figure-hugging bodycon dress in stretchy fabric. Perfect for parties and night outs.", price: 1299, category: "women", images: ["https://images.unsplash.com/photo-1568252542512-9fe8fe9c87bb?w=500"], colors: ["Black", "Red", "Cobalt Blue", "Emerald"], sizes: ["XS", "S", "M", "L"], stock: 40 },
+    { name: "Women's Wide Leg Trousers", description: "Flowy wide-leg trousers in premium crepe fabric. Sophisticated and comfortable.", price: 1699, category: "women", images: ["https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500"], colors: ["Black", "Cream", "Camel", "Navy"], sizes: ["XS", "S", "M", "L", "XL"], stock: 38 },
+    { name: "Women's Silk Blouse", description: "Luxurious silk-effect blouse with button detail. Versatile for office and evening wear.", price: 1899, category: "women", images: ["https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=500"], colors: ["Ivory", "Blush", "Black", "Sage"], sizes: ["XS", "S", "M", "L", "XL"], stock: 32 },
+    { name: "Women's Denim Shorts", description: "Classic cut-off denim shorts with frayed hem. Perfect for casual summer styling.", price: 999, category: "women", images: ["https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=500"], colors: ["Light Wash", "Mid Wash", "Black"], sizes: ["24", "26", "28", "30", "32"], stock: 55 },
+    { name: "Women's Maxi Boho Dress", description: "Flowy bohemian maxi dress with embroidery detail. Free-spirited style for festivals and beach days.", price: 1799, category: "women", images: ["https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=500"], colors: ["White", "Mustard", "Terracotta"], sizes: ["XS", "S", "M", "L", "XL"], stock: 42 },
+    { name: "Women's Leather Jacket", description: "Sleek faux-leather biker jacket with silver zips. Adds instant edge to any outfit.", price: 3499, category: "women", images: ["https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500"], colors: ["Black", "Brown", "Burgundy"], sizes: ["XS", "S", "M", "L"], stock: 22 },
+    { name: "Women's Ribbed Crop Top", description: "Stretchy ribbed crop top in premium cotton-spandex blend. Pairs great with high-waist bottoms.", price: 599, category: "women", images: ["https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500"], colors: ["White", "Black", "Dusty Pink", "Sage", "Lavender"], sizes: ["XS", "S", "M", "L"], stock: 70 },
+    { name: "Women's Trench Coat", description: "Classic double-breasted trench coat in water-resistant fabric. A timeless outerwear investment.", price: 4499, category: "women", images: ["https://images.unsplash.com/photo-1548624313-0396dc030402?w=500"], colors: ["Camel", "Black", "Beige"], sizes: ["XS", "S", "M", "L", "XL"], stock: 18 },
+    { name: "Women's Palazzo Pants", description: "Elegant palazzo pants in flowy georgette fabric. Comfortable and flattering for all body types.", price: 1299, category: "women", images: ["https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=500"], colors: ["Black", "Navy", "Maroon", "Teal"], sizes: ["XS", "S", "M", "L", "XL"], stock: 48 },
+
+    // KIDS
+    { name: "Kids' Rainbow Stripe Leggings", description: "Soft and stretchy rainbow leggings for active kids. Machine washable and colorfast.", price: 399, category: "kids", images: ["https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=500"], colors: ["Rainbow", "Pink Stripe", "Blue Stripe"], sizes: ["2Y", "3Y", "4Y", "5Y", "6Y", "7Y"], stock: 65 },
+    { name: "Kids' Puffer Vest", description: "Lightweight puffer vest for layering in cool weather. Packable and easy to carry.", price: 799, category: "kids", images: ["https://images.unsplash.com/photo-1471286174890-9c112ffca5b4?w=500"], colors: ["Red", "Navy", "Purple", "Orange"], sizes: ["4Y", "6Y", "8Y", "10Y", "12Y"], stock: 38 },
+    { name: "Kids' Dungaree Shorts", description: "Classic denim dungaree shorts with adjustable straps. Playful and practical for active kids.", price: 699, category: "kids", images: ["https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=500"], colors: ["Denim Blue", "Black"], sizes: ["2Y", "3Y", "4Y", "5Y", "6Y"], stock: 42 },
+    { name: "Kids' Superhero Pyjama Set", description: "Fun superhero print pyjama set in super-soft cotton. Kids will love bedtime in these!", price: 649, category: "kids", images: ["https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?w=500"], colors: ["Blue/Red", "Green/Yellow"], sizes: ["3Y", "4Y", "5Y", "6Y", "7Y", "8Y"], stock: 55 },
+    { name: "Kids' School Uniform Shirt", description: "Crisp and easy-iron school uniform shirt. Durable fabric that holds its shape all day.", price: 499, category: "kids", images: ["https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500"], colors: ["White", "Light Blue"], sizes: ["4Y", "6Y", "8Y", "10Y", "12Y", "14Y"], stock: 90 },
+    { name: "Kids' Printed Swim Shorts", description: "Quick-dry swim shorts with fun tropical print. Perfect for pool and beach days.", price: 549, category: "kids", images: ["https://images.unsplash.com/photo-1519278409-1f56fdda7fe5?w=500"], colors: ["Tropical Blue", "Tropical Green", "Orange"], sizes: ["3Y", "4Y", "5Y", "6Y", "7Y", "8Y"], stock: 48 },
+
+    // BABY
+    { name: "Baby 3-Pack Bodysuits", description: "Set of 3 essential short-sleeve bodysuits in soft organic cotton. Mix-and-match colours.", price: 849, category: "baby", images: ["https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=500"], colors: ["White/Yellow/Mint", "Pink/White/Lavender", "Blue/Grey/White"], sizes: ["0-3M", "3-6M", "6-9M", "9-12M"], stock: 85 },
+    { name: "Baby Quilted Jacket", description: "Warm and lightweight quilted jacket with hood for babies. Easy on/off with front zip.", price: 899, category: "baby", images: ["https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=500"], colors: ["Pink", "Blue", "Yellow", "Grey"], sizes: ["0-6M", "6-12M", "12-18M"], stock: 45 },
+    { name: "Baby Knitted Booties & Mittens", description: "Adorable hand-knit style booties and mittens set. Keeps tiny hands and feet cozy.", price: 449, category: "baby", images: ["https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=500"], colors: ["Cream", "Pink", "Blue", "Grey"], sizes: ["0-3M", "3-6M", "6-12M"], stock: 70 },
+    { name: "Baby Muslin Swaddle Wrap", description: "Ultra-soft 100% muslin cotton swaddle wrap. Breathable and perfect for newborns.", price: 599, category: "baby", images: ["https://images.unsplash.com/photo-1519689680058-324335c77eba?w=500"], colors: ["White", "Mint Stripe", "Pink Dots", "Star Print"], sizes: ["One Size"], stock: 100 },
+    { name: "Baby Dungaree & Bodysuit Set", description: "Cute dungaree overalls paired with a matching bodysuit. A complete outfit for little ones.", price: 999, category: "baby", images: ["https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=500"], colors: ["Denim Blue", "Olive", "Red"], sizes: ["3-6M", "6-12M", "12-18M", "18-24M"], stock: 50 },
+  ];
+
   // Products
-  for (const p of products) {
+  const allProducts = [...products, ...extraProducts];
+  for (const p of allProducts) {
     await Product.findOneAndUpdate({ name: p.name }, p, { upsert: true });
   }
 
-  console.log(`✅ Seeded admin, coupons, and ${products.length} products`);
+  console.log(`✅ Seeded admin, coupons, and ${allProducts.length} products`);
   mongoose.disconnect();
 });
